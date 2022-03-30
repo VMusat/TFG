@@ -9,9 +9,11 @@ public class Player : MonoBehaviour
     public int popMax {get; private set; }
     public int popPerSec {get; private set; }
     public int food {get; private set; }
+    public int foodMax {get; private set; }
     public int foodPerSec {get; private set; }
     public int materials {get; private set; }
     public int matPerSec {get; private set; }
+    public int popFoodConst {get; private set; }
 
 
     void Start()
@@ -19,6 +21,11 @@ public class Player : MonoBehaviour
         population = 50;
         popMax = 100;
         popPerSec = 1;
+        food = 50;
+        foodPerSec = 1;
+        materials = 50;
+        matPerSec = 1;
+        popFoodConst = 150;
         StopAllCoroutines();
         StartCoroutine(ResourceLoop());
     }
@@ -32,12 +39,34 @@ public class Player : MonoBehaviour
     public IEnumerator ResourceLoop(){
         while(true){
             yield return WaitFor1Second;
+            calcPop();
             addPop(popPerSec);
+            addFood(foodPerSec);
+            addMat(matPerSec);
         }
     }
 
-    public void addPop(int pop){
-        population += pop;
+    public void calcPop(){
+        int popAux = popPerSec;
+        if(food>0){
+            popAux = ((food-population)/popFoodConst)^3+1;
+        }
+        if (popAux>10){ popAux = 10;}
+        if (popAux<-7){ popAux = -7;}
+        popPerSec = popAux;
+    }
 
+    public void addPop(int pop){
+        if(population+pop < popMax){
+            population += pop;
+        }else{
+            population = popMax;
+        }
+    }
+    public void addFood(int fo){
+        food += fo;
+    }
+    public void addMat(int mat){
+        mat += mat;
     }
 }
