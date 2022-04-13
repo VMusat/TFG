@@ -4,38 +4,54 @@ using UnityEngine;
 
 public class Building
 {
-
-    private BuildingData _data;
-    private Transform _transform;
-    
-    public Building(BuildingData data)
+    public string data;
+    public static int cost;
+    public Type resourceType;
+    public float resourceAmount;
+    public Building()
     {
-        _data = data;
 
-        GameObject g = GameObject.Instantiate(
-            Resources.Load($"Prefabs/Buildings/{_data.Code}")
-        ) as GameObject;
-        _transform = g.transform;
+    }
+    public Building(string data)
+    {
+        this.data = data;
     }
 
-    public void SetPosition(Vector3 position)
-    {
-        _transform.position = position;
+    public int getCost(){
+        return cost;
     }
 
-    public string Code { get => _data.Code; }
-    public Transform Transform { get => _transform; }
-    public int DataIndex
-    {
-        get {
-            for (int i = 0; i < Globals.BUILDING_DATA.Length; i++)
-            {
-                if (Globals.BUILDING_DATA[i].Code == _data.Code)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
+    public enum Type{
+        population,
+        food,
+        materials
+    }
+
+}
+
+public class House : Building{
+    public House(){
+        this.data = "House";
+        cost = 5;
+        this.resourceType = Type.population;
+        this.resourceAmount = 10;
+    }
+}
+
+public class Farm : Building{
+    public Farm(){
+        this.data = "Farm";
+        cost = 15;
+        this.resourceType = Type.food;
+        this.resourceAmount = 0.2f;
+    }
+}
+
+public class Sawmill : Building{
+    public Sawmill(){
+        this.data = "Sawmill";
+        cost = 10;
+        this.resourceType = Type.materials;
+        this.resourceAmount = 0.2f;
     }
 }
