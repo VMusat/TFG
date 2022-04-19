@@ -7,6 +7,9 @@ public class Soldier : Unit
  public int DamageUnits = 20;
  public int DamageTower = 5;
 
+ public static int popCost = 5;
+ public static int foodCost = 10;
+
  public Soldier(){
      popCost = 5;
      foodCost = 10;

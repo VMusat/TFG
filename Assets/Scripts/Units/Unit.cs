@@ -9,8 +9,8 @@ public abstract class Unit : MonoBehaviour
     public static readonly int EnemyLayer = 9;
     public bool IsPlayer;
     public string data;
-    public static int popCost;
-    public static int foodCost;
+    //public static int popCost;
+    //public static int foodCost;
     public UnitType Type;
     public RawImage HealthBar;
     //Atributes
@@ -68,9 +68,11 @@ public abstract class Unit : MonoBehaviour
     {
         if (Health == 0) return;
         Debug.DrawRay(transform.position + MovementDir * RaycastOffset, MovementDir.normalized * AttackDistance, Color.red);
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position + MovementDir * RaycastOffset, MovementDir, AttackDistance, 1<<PlayerLayer | 1<<EnemyLayer);
+        RaycastHit[] hits = Physics.RaycastAll(transform.position + MovementDir * RaycastOffset, MovementDir, AttackDistance, 1<<PlayerLayer | 1<<EnemyLayer);
+        //RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position + MovementDir * RaycastOffset, MovementDir, AttackDistance, 1<<PlayerLayer | 1<<EnemyLayer);
         if (hits.Length >0){
-            RaycastHit2D hit = new RaycastHit2D();
+            RaycastHit hit = new RaycastHit();
+            //RaycastHit2D hit = new RaycastHit2D();
             for (int i = 0; i < hits.Length; ++i){
                 Unit unit = hits[i].collider.GetComponentInParent<Unit>();
                 Tower tower = hits[i].collider.GetComponentInParent<Tower>();
@@ -88,11 +90,11 @@ public abstract class Unit : MonoBehaviour
 
                 if(hit.collider.gameObject.layer == EnemyTeamLayer && !enemyDead){
                     //Attack (Anim)
-                    Debug.Log("Atacooo: "+ hit.collider.gameObject + hit.point);
+                    Debug.Log("Atacooo: "+ hit.collider.gameObject + hit.collider.gameObject.transform.position);
                     Enemy = hit.collider.gameObject;
                 }else{
                     Enemy = null;
-                    float distance = Vector2.Distance(hit.point, (Vector2)(transform.position + MovementDir * RaycastOffset));
+                    float distance = Vector3.Distance(hit.point, (Vector3)(transform.position + MovementDir * RaycastOffset));
                     float stopDistance = StopDistance;
                     if(distance <= stopDistance && !enemyDead && tower == null){
                         Debug.Log("Me detengo");
@@ -108,13 +110,6 @@ public abstract class Unit : MonoBehaviour
             transform.position += MovementDir * Speed * Time.deltaTime;
         }
 
-    }
-
-    public int getPopCost(){
-        return popCost;
-    }
-    public int getFoodCost(){
-        return foodCost;
     }
 
     public void AddHealth(int amount)

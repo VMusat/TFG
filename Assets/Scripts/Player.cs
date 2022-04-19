@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
     public Tower tower;
     public Dictionary<Unit.UnitType, List<GameObject>> Units;
 
+    public Dictionary<Unit.UnitType, Dictionary<string, int>> UnitValues;
+
     void Start()
     {
         Units = new Dictionary<Unit.UnitType, List<GameObject>>();
@@ -42,6 +44,11 @@ public class Player : MonoBehaviour
         Units.Add(Unit.UnitType.Barbarian, new List<GameObject>());
         Units.Add(Unit.UnitType.Knight, new List<GameObject>());
         Units.Add(Unit.UnitType.Catapult, new List<GameObject>());
+        UnitValues = new Dictionary<Unit.UnitType, Dictionary<string, int>>(){
+            {Unit.UnitType.Soldier, new Dictionary<string, int>(){
+                {"Fcost",10}, {"Pcost",5}
+            }}
+        };
         population = 50;
         popMax = popMaxInit;
         popPerSec = 1;
@@ -120,15 +127,15 @@ public class Player : MonoBehaviour
         }  
     }
 
-    public bool Spawn(Unit unit){
-        int unitFCost = unit.getFoodCost();
-        int unitPCost = unit.getPopCost();
+    public bool Spawn(Unit.UnitType unit){
+        int unitFCost = UnitValues[unit]["Fcost"];
+        int unitPCost = UnitValues[unit]["Pcost"];
         if(unitFCost <= food && unitPCost <= population){
-            GameObject prefab = Resources.Load($"Prefabs/Units/{unit.data}") as GameObject;
+            GameObject prefab = Resources.Load($"Prefabs/Units/{unit.ToString()}") as GameObject;
             if (prefab != null){
                 GameObject unitGO = Instantiate(prefab, transform.position + TowerLocationLocal, Quaternion.identity, transform);
                 unitGO.GetComponentInChildren<Unit>().IsPlayer = IsPlayer;
-                Units[unit.Type].Add(unitGO);
+                Units[unit].Add(unitGO);
             }
             addFood(-unitFCost);
             addPop(-unitPCost);

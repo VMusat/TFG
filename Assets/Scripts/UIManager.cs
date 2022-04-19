@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
         HouseButton.onClick.AddListener(() => player.build(new House()));
         FarmButton.onClick.AddListener(() => player.build(new Farm()));
         SawmillButton.onClick.AddListener(() => player.build(new Sawmill()));
-        SoldierButton.onClick.AddListener(() => player.Spawn(new Soldier()));
+        SoldierButton.onClick.AddListener(() => player.Spawn(Unit.UnitType.Soldier));
     }
     private void OnDisable() {
         HouseButton.onClick.RemoveAllListeners();
@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour
             player.build(new Sawmill());
         }
         if(Input.GetKeyDown(KeyCode.Alpha4)){
-            player.Spawn(new Soldier());
+            player.Spawn(Unit.UnitType.Soldier);
         }
 
         HouseButton.interactable = player.materials >= House.cost; //Coste de las construcciones. A mas del mismo tipo, mayor coste? --> Hacer objeto
