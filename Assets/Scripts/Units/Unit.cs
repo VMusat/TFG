@@ -16,7 +16,7 @@ public abstract class Unit : MonoBehaviour
     //Atributes
     public float Speed = 1.0f;
     public float AttackSpeed = 1.0f;
-    public float AttackDistance = 0.5f;
+    public float AttackDistance = 0.0005f;
     public float StopDistance = 0.5f;
     public int InitialHealth = 100;
     public float RaycastOffset = 0.1f;
@@ -67,6 +67,7 @@ public abstract class Unit : MonoBehaviour
     void Update()
     {
         if (Health == 0) return;
+        Debug.DrawRay(transform.position + MovementDir * RaycastOffset, MovementDir.normalized * AttackDistance, Color.red);
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position + MovementDir * RaycastOffset, MovementDir, AttackDistance, 1<<PlayerLayer | 1<<EnemyLayer);
         if (hits.Length >0){
             RaycastHit2D hit = new RaycastHit2D();
@@ -87,12 +88,14 @@ public abstract class Unit : MonoBehaviour
 
                 if(hit.collider.gameObject.layer == EnemyTeamLayer && !enemyDead){
                     //Attack (Anim)
+                    Debug.Log("Atacooo: "+ hit.collider.gameObject + hit.point);
                     Enemy = hit.collider.gameObject;
                 }else{
                     Enemy = null;
                     float distance = Vector2.Distance(hit.point, (Vector2)(transform.position + MovementDir * RaycastOffset));
                     float stopDistance = StopDistance;
                     if(distance <= stopDistance && !enemyDead && tower == null){
+                        Debug.Log("Me detengo");
                         //Idle (Anim)
                     }else{
                         //Move (Anim)
