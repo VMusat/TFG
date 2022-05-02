@@ -15,11 +15,12 @@ public abstract class Unit : MonoBehaviour
     public RawImage HealthBar;
     //Atributes
     public float Speed = 1.0f;
-    public float AttackSpeed = 1.0f;
+    public static float AttackSpeed = 1.0f;
     public float AttackDistance = 0.0005f;
     public float StopDistance = 0.5f;
     public int InitialHealth = 100;
     public float RaycastOffset = 0.1f;
+    public bool atacando = false;
     //Privates
     private Player Player;
     private Vector3 MovementDir;
@@ -31,7 +32,7 @@ public abstract class Unit : MonoBehaviour
     private int EnemyTeamLayer;
     //
     private GameObject Enemy;
-    private int Health;
+    protected int Health;
     private SpriteRenderer Image;
     private Color ImageColor;
 
@@ -39,27 +40,27 @@ public abstract class Unit : MonoBehaviour
         Soldier, Knight, Barbarian, Catapult
     }
 
-    protected virtual void Awake()
+    public virtual void Awake()
     {
         Player = GetComponentInParent<Player>();
     }
     void Start()
     {
-        //Animator = GetComponentInChildren<Animator>();
-        //IsWalkingID = Animator.StringToHash("isWalking");
-        //AttackID = Animator.StringToHash("attack");
-        //DieID = Animator.StringToHash("die");
+        Animator = GetComponentInChildren<Animator>();
+        IsWalkingID = Animator.StringToHash("isWalking");
+        AttackID = Animator.StringToHash("attack");
+        DieID = Animator.StringToHash("die");
         MovementDir = IsPlayer ? Vector3.forward : Vector3.back;
         EnemyTeamLayer = IsPlayer ? EnemyLayer : PlayerLayer;
-        //Animator.SetFloat("attackSpeed", AttackSpeed);
+        Animator.SetFloat("attackSpeed", AttackSpeed);
 
          Health = InitialHealth;
-         foreach (Transform t in GetComponentsInChildren<Transform>()) t.gameObject.layer = IsPlayer? EnemyLayer : PlayerLayer;
+         foreach (Transform t in GetComponentsInChildren<Transform>()) t.gameObject.layer = IsPlayer? PlayerLayer:EnemyLayer;
          if (!IsPlayer)
         {
-            Vector3 localScale = transform.localScale;
-            localScale.z = -1;
-            transform.localScale = localScale;
+            Quaternion localRotation = transform.localRotation;
+            localRotation.y = 180;
+            transform.localRotation = localRotation;
         }
     }
 
@@ -90,23 +91,34 @@ public abstract class Unit : MonoBehaviour
 
                 if(hit.collider.gameObject.layer == EnemyTeamLayer && !enemyDead){
                     //Attack (Anim)
-                    Debug.Log("Atacooo: "+ hit.collider.gameObject + hit.collider.gameObject.transform.position);
+                    
+                    
+                    //Debug.Log("Atacooo: "+ hit.collider.gameObject + hit.collider.gameObject.transform.position);
                     Enemy = hit.collider.gameObject;
+                    if(!atacando){
+                        atacando = true;
+                        StartCoroutine(AttackAction());
+                    }   
+                    //AttackAnim();
                 }else{
                     Enemy = null;
+                    atacando = false;
+                    StopCoroutine(AttackAction());
                     float distance = Vector3.Distance(hit.point, (Vector3)(transform.position + MovementDir * RaycastOffset));
                     float stopDistance = StopDistance;
                     if(distance <= stopDistance && !enemyDead && tower == null){
-                        Debug.Log("Me detengo");
+                        IdleAnim();
                         //Idle (Anim)
                     }else{
                         //Move (Anim)
+                        MoveAnim();
                         transform.position += MovementDir * Speed * Time.deltaTime;
                     }
                 }
             }
         }else{
             //Move (Anim)
+            MoveAnim();
             transform.position += MovementDir * Speed * Time.deltaTime;
         }
 
@@ -162,27 +174,37 @@ public abstract class Unit : MonoBehaviour
         {
             Dead = true;
             //Die (Anim)
-            BoxCollider2D collider = GetComponentInChildren<BoxCollider2D>();
-            if (collider != null) collider.enabled = false;
+            DieAnim();
+            BoxCollider collider = GetComponentInChildren<BoxCollider>();
+            //if (collider != null) collider.enabled = false;
+            Player.Base.colls.Remove(collider);
+            if (collider != null) Destroy(collider);
             Player?.UnitKilled(gameObject, Type);
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(0.5f);
             Destroy(gameObject);
         }
     }
 
     private WaitForSeconds WaitDamage = new WaitForSeconds(0.25f);
+    private WaitForSeconds WaitAttack = new WaitForSeconds(AttackSpeed);
     private IEnumerator DamageEffect()
     {
-        Image.color = new Color(1.0f, ImageColor.g / 4.0f, ImageColor.b / 4.0f, ImageColor.a);
+        //Image.color = new Color(1.0f, ImageColor.g / 4.0f, ImageColor.b / 4.0f, ImageColor.a);
         yield return WaitDamage;
-        Image.color = ImageColor;
+        //Image.color = ImageColor;
     }
 
     private IEnumerator HealEffect()
     {
-        Image.color = new Color(ImageColor.r / 4.0f, 1.0f, ImageColor.b / 4.0f, ImageColor.a);
+        //Image.color = new Color(ImageColor.r / 4.0f, 1.0f, ImageColor.b / 4.0f, ImageColor.a);
         yield return WaitDamage;
-        Image.color = ImageColor;
+        //Image.color = ImageColor;
+    }
+
+    private IEnumerator AttackAction(){
+        yield return WaitAttack;
+        Attack(Enemy);
+        atacando=false;
     }
 
     public void OnAnimationAttackEnded()
@@ -193,6 +215,31 @@ public abstract class Unit : MonoBehaviour
         }
     }
     protected abstract void Attack(GameObject enemy);
+
+    private void AttackAnim()
+    {
+        Animator?.SetBool(DieID, false);
+        Animator?.SetBool(AttackID, true);
+        Animator?.SetBool(IsWalkingID, false);
+    }
+    private void MoveAnim()
+    {
+        Animator?.SetBool(DieID, false);
+        Animator?.SetBool(AttackID, false);
+        Animator?.SetBool(IsWalkingID, true);
+    }
+    private void IdleAnim()
+    {
+        Animator?.SetBool(DieID, false);
+        Animator?.SetBool(AttackID, false);
+        Animator?.SetBool(IsWalkingID, false);
+    }
+    private void DieAnim()
+    {
+        Animator?.SetBool(DieID, true);
+        Animator?.SetBool(AttackID, false);
+        Animator?.SetBool(IsWalkingID, false);
+    }
 
 
 }

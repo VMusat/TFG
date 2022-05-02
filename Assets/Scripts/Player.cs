@@ -23,12 +23,12 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI HousesText;
     public TextMeshProUGUI FarmsText;
     public TextMeshProUGUI SawmillsText;
-    public GameObject Base;
+    public BaseGrid Base;
     List<Building> buildingList = new List<Building>();
     //Variables Iniciales que cambian con las construcciones
-    int popMaxInit = 100;
-    float foodPerSecInit = 1;
-    float matPerSecInit = 1;
+    const int popMaxInit = 100;
+    const float foodPerSecInit = 1;
+    const float matPerSecInit = 1;
     //
     public Vector3 TowerLocationLocal;
     public bool IsPlayer;
@@ -47,8 +47,20 @@ public class Player : MonoBehaviour
         UnitValues = new Dictionary<Unit.UnitType, Dictionary<string, int>>(){
             {Unit.UnitType.Soldier, new Dictionary<string, int>(){
                 {"Fcost",10}, {"Pcost",5}
+            }},
+            {Unit.UnitType.Knight, new Dictionary<string, int>(){
+                {"Fcost",40}, {"Pcost",5}
+            }},
+            {Unit.UnitType.Catapult, new Dictionary<string, int>(){
+                {"Fcost",20}, {"Pcost",10}
+            }},
+            {Unit.UnitType.Barbarian, new Dictionary<string, int>(){
+                {"Fcost",20}, {"Pcost",5}
             }}
         };
+    }
+
+    public void Reset() {
         population = 50;
         popMax = popMaxInit;
         popPerSec = 1;
@@ -56,7 +68,9 @@ public class Player : MonoBehaviour
         foodPerSec = foodPerSecInit;
         materials = 50;
         matPerSec = matPerSecInit;
-        popFoodConst = 150;
+        popFoodConst = 100;
+        ResetUnits();
+        ResetBuildings();
         UpdateFoodUI();
         UpdateFoodPerSecondUI();
         UpdateMatUI();
@@ -66,7 +80,6 @@ public class Player : MonoBehaviour
         UpdateBuildingsUI();
         StopAllCoroutines();
         StartCoroutine(ResourceLoop());
-        ResetUnits();
         tower.Reset();
     }
 
@@ -79,6 +92,9 @@ public class Player : MonoBehaviour
             addFood(foodPerSec);
             addMat(matPerSec);
             addResourcesPS();
+            if(tower.dead){
+                StopAllCoroutines();
+            }
         }
     }
 
@@ -95,9 +111,9 @@ public class Player : MonoBehaviour
     public void addPop(float pop){
         if(population+pop < popMax){
             population += pop;
-            if (population < 0){
+            if (population <= 0){
                 population = 0;
-                StopCoroutine(ResourceLoop());
+                StopAllCoroutines();
             } 
         }else{
             population = popMax;
@@ -115,22 +131,30 @@ public class Player : MonoBehaviour
         UpdateMatUI();
     }
 
-    public void build(Building buil){
+    public bool build(Building buil){
         if (materials >= buil.getCost()){
-            buildingList.Add(buil);
-            string data = buil.data;
-            GameObject b = Instantiate(Resources.Load($"Prefabs/Buildings/{data}") as GameObject, new Vector3(0,0,0), Quaternion.identity);
-            b.transform.SetParent(Base.transform, false);
-            materials = materials - buil.getCost();
-            UpdateMatUI();
-            UpdateBuildingsUI();
+            //string data = buil.data;
+            //GameObject b = Instantiate(Resources.Load($"Prefabs/Buildings/{data}") as GameObject, new Vector3(0,0,0), Quaternion.identity);
+            //b.transform.SetParent(Base.transform, false);
+
+            if(Base.Ocupar(buil)){
+                buildingList.Add(buil);
+                materials = materials - buil.getCost();
+                UpdateMatUI();
+                UpdateBuildingsUI();
+                return true;
+            }else{ //else No queda espacio en la base
+                return false;
+            }
+        }else{
+            return false;
         }  
     }
 
     public bool Spawn(Unit.UnitType unit){
         int unitFCost = UnitValues[unit]["Fcost"];
         int unitPCost = UnitValues[unit]["Pcost"];
-        if(unitFCost <= food && unitPCost <= population){
+        if(unitFCost <= food && unitPCost <= population && IsCountUnits() && IsUnitsInBase()){
             GameObject prefab = Resources.Load($"Prefabs/Units/{unit.ToString()}") as GameObject;
             if (prefab != null){
                 GameObject unitGO = Instantiate(prefab, transform.position + TowerLocationLocal, Quaternion.identity, transform);
@@ -154,6 +178,22 @@ public class Player : MonoBehaviour
         Debug.Assert(removed, "This should not happen");
     }
 
+    public bool IsCountUnits(){
+        int cont = 0;
+        foreach (Unit.UnitType uType in uni){
+             cont = cont + Units[uType].Count;
+        }
+        return (cont <= 7);
+    }
+
+    public bool IsUnitsInBase(){
+        int cont = 0;
+        cont = Base.unitsOnBase;
+        return (cont <= 2);
+    }
+
+    private static Unit.UnitType[] uni = {Unit.UnitType.Barbarian, Unit.UnitType.Catapult, Unit.UnitType.Knight, Unit.UnitType.Soldier};
+
     private void ResetUnits()
     {
         foreach (Transform unitTransform in transform)
@@ -162,29 +202,39 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void ResetBuildings()
+    {
+        foreach (Transform buildTransform in Base.transform)
+        {
+            Destroy(buildTransform.gameObject);
+        }
+        buildingList.Clear();
+        Base.Liberar();
+    }
+
     private void UpdatePopUI(){
         if (PopText != null)
-            PopText.text = ((int)population).ToString();
+            PopText.text = "Pob: "+((int)population).ToString();
     }
     private void UpdateFoodUI(){
         if (FoodText != null)
-            FoodText.text = ((int)food).ToString();
+            FoodText.text = "Alim: "+((int)food).ToString();
     }
     private void UpdateMatUI(){
         if (MatText != null)
-            MatText.text = ((int)materials).ToString();
+            MatText.text = "Mat: "+((int)materials).ToString();
     }
     private void UpdatePopPerSecondUI(){
         if (PopPerSecondText != null)
-            PopPerSecondText.text = "+" + popPerSec.ToString();
+            PopPerSecondText.text = "P/s: +" + popPerSec.ToString();
     }
     private void UpdateFoodPerSecondUI(){
         if (FoodPerSecondText != null)
-            FoodPerSecondText.text = "+" + foodPerSec.ToString();
+            FoodPerSecondText.text = "A/s: +" + foodPerSec.ToString();
     }
     private void UpdateMatPerSecondUI(){
         if (MatPerSecondText != null)
-            MatPerSecondText.text = "+" + matPerSec.ToString();
+            MatPerSecondText.text = "M/s: +" + matPerSec.ToString();
     }
     public void UpdateBuildingsUI(){
         int hou = 0, far = 0, saw = 0;
@@ -224,5 +274,6 @@ public class Player : MonoBehaviour
         UpdateMatPerSecondUI();
         UpdateFoodPerSecondUI();
     }
+    
 
 }

@@ -7,8 +7,8 @@ public class Tower : MonoBehaviour
 {
     public event Action OnDestroyed;
     public event Action<int> OnDamaged;
-
     public Player Player;
+    public bool dead = false;
     public int InitialHealth = 100;
     public RawImage HealthBar;
     public int Health { get; private set; }
@@ -21,6 +21,7 @@ public class Tower : MonoBehaviour
         Reset();
     }
     public void Reset() {
+        dead = false;
         Health = 50;
         //Debug.Log(Health.ToString() +" y "+ InitialHealth.ToString() );
         AddHealth(0);
@@ -49,6 +50,7 @@ public class Tower : MonoBehaviour
         if (Health == 0)
         {
             // Dead
+            dead=true;
             StartCoroutine(Die());
             if (HealthBar.gameObject.activeSelf) HealthBar.gameObject.SetActive(false);
             // Effect
@@ -88,7 +90,7 @@ public class Tower : MonoBehaviour
     }
     public int UnitsInTower { get; private set; }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponentInParent<Unit>() != null)
         {
@@ -96,7 +98,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.GetComponentInParent<Unit>() != null)
         {
