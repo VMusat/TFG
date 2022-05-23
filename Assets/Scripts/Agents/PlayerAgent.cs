@@ -28,6 +28,12 @@ public class PlayerAgent : Agent
     private bool AllyTowerDestroyed;
     private bool TieMatch;
 
+    //Soldado, Caballero, Catapulta, Barbaro
+    private int[] UnitCount;
+    //Casa, Granja, Aserradero
+    private int[] BuilCount;
+
+
     private void Awake()
     {
         ThisPlayer = GetComponent<Player>();
@@ -57,10 +63,13 @@ public class PlayerAgent : Agent
         RewardEpisode = 0.0f;
         NumberEnemyUnitsKilled = 0;
         NumberUnitsSpawned = 0;
+        NumberBuildings = 0;
         AllyTowerDamage = 0;
         EnemyTowerDamage = 0;
         NumberSoldiers = 0;
         NumberCatapults = 0;
+        UnitCount = new int[4];
+        BuilCount = new int[3];
         EnemyTowerDestroyed = false;
         AllyTowerDestroyed = false;
         TieMatch = false;
@@ -84,7 +93,7 @@ public class PlayerAgent : Agent
     }
 
      public override void CollectObservations(VectorSensor sensor){
-        sensor.AddObservation((float)ThisPlayer.tower.Health / (float)ThisPlayer.tower.InitialHealth);
+        sensor.AddObservation((float)ThisPlayer.ThisTower.Health / (float)ThisPlayer.ThisTower.InitialHealth);
         
         float maxPop = ThisPlayer.popMax;
         const float maxMat = 200.0f;
@@ -220,11 +229,15 @@ public class PlayerAgent : Agent
                         AddReward(-0.1f);
                     }
                     NumberSoldiers += 1;
+                    this.UnitCount[0] += 1;
                 }
                 break;
             case 2: //Caballero
                 done = ThisPlayer.Spawn(Unit.UnitType.Knight);
-                if (done) NumberUnitsSpawned += 1;
+                if (done){
+                    NumberUnitsSpawned += 1;
+                    this.UnitCount[1] += 1;
+                } 
                 break;
             case 3: //Catapulta
                 done = ThisPlayer.Spawn(Unit.UnitType.Catapult);
@@ -234,27 +247,38 @@ public class PlayerAgent : Agent
                         AddReward(-0.1f);
                     }
                     NumberCatapults += 1;
+                    this.UnitCount[2] += 1;
                 }
                 break;
             case 4: //Barbaro
                 done = ThisPlayer.Spawn(Unit.UnitType.Barbarian);
-                if (done) NumberUnitsSpawned += 1;
+                if (done){
+                    NumberUnitsSpawned += 1;
+                    this.UnitCount[3] += 1;
+                }
                 break;
             case 5: //Hogar
                 done = ThisPlayer.build(new House());
-                if (done) NumberBuildings += 1;
+                if (done){
+                    NumberBuildings += 1;
+                    this.BuilCount[0] += 1;
+                } 
                 break;
             case 6: //Granja
                 done = ThisPlayer.build(new Farm());
-                if (done) NumberBuildings += 1;
+                if (done){
+                    NumberBuildings += 1;
+                    this.BuilCount[1] += 1;
+                } 
                 break;
             case 7: //Aserradero
                 done = ThisPlayer.build(new Sawmill());
-                if (done) NumberBuildings += 1;
-                break;
-            
+                if (done){
+                    NumberBuildings += 1;
+                    this.BuilCount[2] += 1;
+                } 
+                break;   
         }
-
      }
 
     bool alpha1Down, alpha2Down, alpha3Down, alpha4Down, alpha5Down, alpha6Down;
@@ -392,6 +416,19 @@ public class PlayerAgent : Agent
         const float reward = 4.0f / 480.0f;
         AddReward(-reward);
         RewardEpisode -= reward;
+    }
+
+    public List<int[]> returnStats(){
+        List<int[]> stats = new List<int[]>();
+        int[] numUnits = new int[1];
+        int[] numBuilds = new int[1];
+        numUnits[0] = this.NumberUnitsSpawned;
+        numBuilds[0] = this.NumberBuildings;
+        stats.Add(numUnits);
+        stats.Add(UnitCount);
+        stats.Add(numBuilds);
+        stats.Add(BuilCount);
+        return stats;
     }
 
 

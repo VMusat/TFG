@@ -15,8 +15,8 @@ public class Soldier : Unit
  public Soldier(){
      //popCost = 5;
      //foodCost = 10;
-     this.data = "Soldier";
-     this.Type = UnitType.Soldier;
+     //this.data = "Soldier";
+     //this.Type = UnitType.Soldier;
  }
 
     protected override void Attack(GameObject enemy)

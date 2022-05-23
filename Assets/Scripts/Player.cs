@@ -23,19 +23,20 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI HousesText;
     public TextMeshProUGUI FarmsText;
     public TextMeshProUGUI SawmillsText;
-    public BaseGrid Base;
-    List<Building> buildingList = new List<Building>();
+    
     //Variables Iniciales que cambian con las construcciones
-    const int popMaxInit = 100;
-    const float foodPerSecInit = 1;
-    const float matPerSecInit = 1;
-    //
+    private const int popMaxInit = 100;
+    private const float foodPerSecInit = 1;
+    private const float matPerSecInit = 1;
+    //Parametros publicos
     public Vector3 TowerLocationLocal;
     public bool IsPlayer;
-    public Tower tower;
+    public Tower ThisTower;
+    public BaseGrid Base;
+    //Almacenamiento de unidades y edificios
     public Dictionary<Unit.UnitType, List<GameObject>> Units;
-
     public Dictionary<Unit.UnitType, Dictionary<string, int>> UnitValues;
+    public List<Building> BuildingList = new List<Building>();
 
     void Start()
     {
@@ -46,16 +47,16 @@ public class Player : MonoBehaviour
         Units.Add(Unit.UnitType.Catapult, new List<GameObject>());
         UnitValues = new Dictionary<Unit.UnitType, Dictionary<string, int>>(){
             {Unit.UnitType.Soldier, new Dictionary<string, int>(){
-                {"Fcost",10}, {"Pcost",5}
+                {"Fcost",Soldier.foodCost}, {"Pcost",Soldier.popCost}
             }},
             {Unit.UnitType.Knight, new Dictionary<string, int>(){
-                {"Fcost",40}, {"Pcost",5}
+                {"Fcost",Knight.foodCost}, {"Pcost",Knight.popCost}
             }},
             {Unit.UnitType.Catapult, new Dictionary<string, int>(){
-                {"Fcost",20}, {"Pcost",10}
+                {"Fcost",Catapult.foodCost}, {"Pcost",Catapult.popCost}
             }},
             {Unit.UnitType.Barbarian, new Dictionary<string, int>(){
-                {"Fcost",20}, {"Pcost",5}
+                {"Fcost",Barbarian.foodCost}, {"Pcost",Barbarian.popCost}
             }}
         };
     }
@@ -80,11 +81,11 @@ public class Player : MonoBehaviour
         UpdateBuildingsUI();
         StopAllCoroutines();
         StartCoroutine(ResourceLoop());
-        tower.Reset();
+        ThisTower.Reset();
     }
 
     private WaitForSeconds WaitFor1Second = new WaitForSeconds(1.0f);
-    public IEnumerator ResourceLoop(){
+    private IEnumerator ResourceLoop(){
         while(true){
             yield return WaitFor1Second;
             calcPop();
@@ -92,13 +93,13 @@ public class Player : MonoBehaviour
             addFood(foodPerSec);
             addMat(matPerSec);
             addResourcesPS();
-            if(tower.dead){
+            if(ThisTower.dead){
                 StopAllCoroutines();
             }
         }
     }
 
-    public void calcPop(){
+    private void calcPop(){
         float popAux = popPerSec;
         popAux = ((food-population)/popFoodConst);
         popAux = Mathf.Pow(popAux, 3)+1;
@@ -138,7 +139,7 @@ public class Player : MonoBehaviour
             //b.transform.SetParent(Base.transform, false);
 
             if(Base.Ocupar(buil)){
-                buildingList.Add(buil);
+                BuildingList.Add(buil);
                 materials = materials - buil.getCost();
                 UpdateMatUI();
                 UpdateBuildingsUI();
@@ -157,7 +158,8 @@ public class Player : MonoBehaviour
         if(unitFCost <= food && unitPCost <= population && IsCountUnits() && IsUnitsInBase()){
             GameObject prefab = Resources.Load($"Prefabs/Units/{unit.ToString()}") as GameObject;
             if (prefab != null){
-                GameObject unitGO = Instantiate(prefab, transform.position + TowerLocationLocal, Quaternion.identity, transform);
+                GameObject unitGO =
+                     Instantiate(prefab, transform.position + TowerLocationLocal, Quaternion.identity, transform);
                 unitGO.GetComponentInChildren<Unit>().IsPlayer = IsPlayer;
                 Units[unit].Add(unitGO);
             }
@@ -208,7 +210,7 @@ public class Player : MonoBehaviour
         {
             Destroy(buildTransform.gameObject);
         }
-        buildingList.Clear();
+        BuildingList.Clear();
         Base.Liberar();
     }
 
@@ -236,9 +238,9 @@ public class Player : MonoBehaviour
         if (MatPerSecondText != null)
             MatPerSecondText.text = "M/s: +" + matPerSec.ToString();
     }
-    public void UpdateBuildingsUI(){
+    private void UpdateBuildingsUI(){
         int hou = 0, far = 0, saw = 0;
-        foreach (Building buil in buildingList){
+        foreach (Building buil in BuildingList){
             if (buil.data.Equals("House")) hou++;
             if (buil.data.Equals("Farm")) far++;
             if (buil.data.Equals("Sawmill")) saw++;
@@ -251,11 +253,11 @@ public class Player : MonoBehaviour
             SawmillsText.text = "Aserraderos: " + saw;
     }
 
-    public void addResourcesPS(){
+    private void addResourcesPS(){
         int popMaxAux = popMaxInit;
         float foodAux = foodPerSecInit;
         float matAux = matPerSecInit;
-        foreach (Building buil in buildingList){
+        foreach (Building buil in BuildingList){
             switch(buil.resourceType){
                 case Building.Type.population:
                     popMaxAux += (int)buil.resourceAmount;

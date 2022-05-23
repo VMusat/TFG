@@ -30,7 +30,7 @@ public class Tower : MonoBehaviour
     }
     
     private WaitForSeconds WaitForHealth = new WaitForSeconds(0.2f);
-    public IEnumerator UpdateLoop(){
+    private IEnumerator UpdateLoop(){
          while(true){
             yield return WaitForHealth;
             Health = (int)Player.population;
@@ -54,7 +54,7 @@ public class Tower : MonoBehaviour
             StartCoroutine(Die());
             if (HealthBar.gameObject.activeSelf) HealthBar.gameObject.SetActive(false);
             // Effect
-            StartCoroutine(DamageEffect());
+            //StartCoroutine(DamageEffect());
         }
         else if (Health == InitialHealth)
         {
@@ -67,7 +67,7 @@ public class Tower : MonoBehaviour
             if (!HealthBar.gameObject.activeSelf) HealthBar.gameObject.SetActive(true);
             UpdateBar();
             // Effect
-            StartCoroutine(DamageEffect());
+            //StartCoroutine(DamageEffect());
         }
     }
 
@@ -88,6 +88,7 @@ public class Tower : MonoBehaviour
         }
         OnDestroyed?.Invoke();
     }
+    /*
     public int UnitsInTower { get; private set; }
 
     private void OnTriggerEnter(Collider other)
@@ -105,6 +106,7 @@ public class Tower : MonoBehaviour
             UnitsInTower -= 1;
         }
     }
+    
     private WaitForSeconds WaitDamage = new WaitForSeconds(0.25f);
     private IEnumerator DamageEffect()
     {
@@ -112,5 +114,6 @@ public class Tower : MonoBehaviour
         yield return WaitDamage;
         //Image.color = ImageColor;
     }
+    */
 
 }

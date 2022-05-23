@@ -39,7 +39,9 @@ public class BaseGrid : MonoBehaviour
             //grid.GetXZ(worldPosition,out x,out z);
             grid.SetValue(x, z, buil);
             string data = buil.data;
-            GameObject b = Instantiate(Resources.Load($"Prefabs/Buildings/{data}") as GameObject, grid.GetBuildingPosition(x,z), Quaternion.identity);
+            GameObject b =
+                Instantiate(Resources.Load($"Prefabs/Buildings/{data}") as GameObject,
+                grid.GetBuildingPosition(x,z), Quaternion.identity);
             b.transform.SetParent(transform, true);
         }
         return free;

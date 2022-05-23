@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2930023708010175341}
-  - component: {fileID: 6349797739042512523}
   - component: {fileID: 6679938193382584866}
+  - component: {fileID: 6349797739042512523}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Untagged
@@ -33,30 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6349797739042512523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 525953083515873421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ff2d00f407d9ba46bebb7d603550ef5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsPlayer: 1
-  data: Soldier
-  Type: 0
-  HealthBar: {fileID: 7501821628539677855}
-  Speed: 1
-  AttackDistance: 1
-  StopDistance: 1
-  InitialHealth: 100
-  RaycastOffset: 0.31
-  atacando: 0
-  DamageUnits: 20
-  DamageTower: 5
 --- !u!54 &6679938193382584866
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -73,6 +49,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 118
   m_CollisionDetection: 0
+--- !u!114 &6349797739042512523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525953083515873421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ff2d00f407d9ba46bebb7d603550ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsPlayer: 1
+  Type: 0
+  HealthBar: {fileID: 7501821628539677855}
+  Speed: 1
+  AttackDistance: 1
+  StopDistance: 1
+  InitialHealth: 100
+  RaycastOffset: 0.31
+  DamageUnits: 20
+  DamageTower: 5
 --- !u!1 &744267413091106581
 GameObject:
   m_ObjectHideFlags: 0

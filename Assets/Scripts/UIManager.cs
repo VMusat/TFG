@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     public Player player;
     private EventTrigger HouseET, FarmET, SawmillET;
     private EventTrigger SoldierET, KnightET, CatapultET, BarbarianET;
+    private bool onCooldown = false;
 
     private void Awake() {
         player = GetComponent<Player>();
@@ -72,11 +73,11 @@ public class UIManager : MonoBehaviour
             player.Spawn(Unit.UnitType.Barbarian);
         }
 
-        HouseButton.interactable = player.materials >= House.cost; //Coste de las construcciones. A mas del mismo tipo, mayor coste? --> Hacer objeto
+        HouseButton.interactable = player.materials >= new House().cost; //Coste de las construcciones. A mas del mismo tipo, mayor coste? --> Hacer objeto
         HouseET.enabled = HouseButton.interactable;
-        FarmButton.interactable = player.materials >= Farm.cost;
+        FarmButton.interactable = player.materials >= new Farm().cost;
         FarmET.enabled = FarmButton.interactable;
-        SawmillButton.interactable = player.materials >= Sawmill.cost;
+        SawmillButton.interactable = player.materials >= new Sawmill().cost;
         SawmillET.enabled = SawmillButton.interactable;
 
         SoldierButton.interactable = player.food >= Soldier.foodCost && player.population >= Soldier.popCost && !onCooldown && player.IsCountUnits() && player.IsUnitsInBase();
@@ -92,9 +93,8 @@ public class UIManager : MonoBehaviour
         BarbarianET.enabled = BarbarianButton.interactable;
     }
     private WaitForSeconds WaitCooldown = new WaitForSeconds(1.5f);
-    private bool onCooldown = false;
 
-    public IEnumerator Cooldown(){
+    private IEnumerator Cooldown(){
         onCooldown = true;
         SoldierButton.interactable = false;
         KnightButton.interactable = false;

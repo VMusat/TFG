@@ -128,8 +128,8 @@ Transform:
   - {fileID: 6885417033705164507}
   - {fileID: 1250518760368528491}
   - {fileID: 6655353925723051699}
-  - {fileID: 2303696670912196124}
   - {fileID: 1402501731574960989}
+  - {fileID: 2303696670912196124}
   m_Father: {fileID: 1176294249240251492}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -239,7 +239,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsPlayer: 0
-  data: Knight
   Type: 1
   HealthBar: {fileID: 3329954380289472325}
   Speed: 2
@@ -247,7 +246,6 @@ MonoBehaviour:
   StopDistance: 1
   InitialHealth: 200
   RaycastOffset: 0.31
-  atacando: 0
   DamageUnits: 40
   DamageTower: 6
 --- !u!1 &5300059213556312150
@@ -280,7 +278,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.2, z: 1.5}
   m_Children: []
   m_Father: {fileID: 3957876129349820276}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -15.94, y: 0, z: 0}
 --- !u!33 &5076642344403326480
 MeshFilter:
@@ -611,7 +609,7 @@ PrefabInstance:
     - target: {fileID: 6111872246149372188, guid: d23be426cb4fe7c4b8e2d9a6558f9653,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6111872246149372188, guid: d23be426cb4fe7c4b8e2d9a6558f9653,
         type: 3}

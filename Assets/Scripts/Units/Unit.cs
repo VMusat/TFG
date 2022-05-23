@@ -8,7 +8,7 @@ public abstract class Unit : MonoBehaviour
     public static readonly int PlayerLayer = 8;
     public static readonly int EnemyLayer = 9;
     public bool IsPlayer;
-    public string data;
+    //public string data;
     //public static int popCost;
     //public static int foodCost;
     public UnitType Type;
@@ -20,7 +20,7 @@ public abstract class Unit : MonoBehaviour
     public float StopDistance = 0.5f;
     public int InitialHealth = 100;
     public float RaycastOffset = 0.1f;
-    public bool atacando = false;
+    private bool atacando = false;
     //Privates
     private Player Player;
     private Vector3 MovementDir;
@@ -33,8 +33,9 @@ public abstract class Unit : MonoBehaviour
     //
     private GameObject Enemy;
     protected int Health;
-    private SpriteRenderer Image;
-    private Color ImageColor;
+    public bool Dead { get; private set; }
+    //private SpriteRenderer Image;
+    //private Color ImageColor;
 
     public enum UnitType{
         Soldier, Knight, Barbarian, Catapult
@@ -167,7 +168,6 @@ public abstract class Unit : MonoBehaviour
         }
     }
 
-        public bool Dead { get; private set; }
     private IEnumerator Die()
     {
         if (!Dead)

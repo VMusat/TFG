@@ -1,0 +1,79 @@
+[INFO] Listening on port 5004. Start training by pressing the Play button in the Unity Editor.
+[INFO] Connected to Unity environment with package version 2.0.1 and communication version 1.5.0
+[INFO] Connected new brain: PlayerAgent?team=0
+[INFO] Connected new brain: PlayerAgent?team=1
+
+
+	Unity Technologies
+
+ Version information:
+  ml-agents: 0.28.0,
+  ml-agents-envs: 0.28.0,
+  Communicator API: 1.5.0,
+  PyTorch: 1.11.0+cpu
+[WARNING] Behavior name PlayerAgent does not match any behaviors specified in the trainer configuration file. A default configuration will be used.
+[WARNING] Deleting TensorBoard data events.out.tfevents.1653229138.DESKTOP-BN6HVV0.21084.0 that was left over from a previous run.
+[INFO] Hyperparameters for behavior name PlayerAgent: 
+	trainer_type:	ppo
+	hyperparameters:	
+	  batch_size:	1024
+	  buffer_size:	10240
+	  learning_rate:	0.0003
+	  beta:	0.005
+	  epsilon:	0.2
+	  lambd:	0.95
+	  num_epoch:	3
+	  learning_rate_schedule:	linear
+	  beta_schedule:	linear
+	  epsilon_schedule:	linear
+	network_settings:	
+	  normalize:	False
+	  hidden_units:	128
+	  num_layers:	2
+	  vis_encode_type:	simple
+	  memory:	None
+	  goal_conditioning_type:	hyper
+	  deterministic:	False
+	reward_signals:	
+	  extrinsic:	
+	    gamma:	0.99
+	    strength:	1.0
+	    network_settings:	
+	      normalize:	False
+	      hidden_units:	128
+	      num_layers:	2
+	      vis_encode_type:	simple
+	      memory:	None
+	      goal_conditioning_type:	hyper
+	      deterministic:	False
+	init_path:	None
+	keep_checkpoints:	5
+	checkpoint_interval:	500000
+	max_steps:	500000
+	time_horizon:	64
+	summary_freq:	50000
+	threaded:	False
+	self_play:	None
+	behavioral_cloning:	None
+[WARNING] Your environment contains multiple teams, but PPOTrainer doesn't support adversarial games. Enable self-play to                     train adversarial games.
+[WARNING] Restarting worker[0] after 'Communicator has exited.'
+[INFO] Listening on port 5004. Start training by pressing the Play button in the Unity Editor.
+[INFO] Connected to Unity environment with package version 2.0.1 and communication version 1.5.0
+[INFO] Connected new brain: PlayerAgent?team=0
+[INFO] Connected new brain: PlayerAgent?team=1
+[INFO] PlayerAgent. Step: 50000. Time Elapsed: 82.566 s. Mean Reward: 22.279. Std of Reward: 16.663. Training.
+[INFO] PlayerAgent. Step: 100000. Time Elapsed: 140.918 s. Mean Reward: 31.085. Std of Reward: 24.825. Training.
+[INFO] PlayerAgent. Step: 150000. Time Elapsed: 199.364 s. Mean Reward: 23.296. Std of Reward: 24.275. Training.
+[INFO] PlayerAgent. Step: 200000. Time Elapsed: 262.694 s. Mean Reward: 45.348. Std of Reward: 22.346. Training.
+[INFO] PlayerAgent. Step: 250000. Time Elapsed: 329.964 s. Mean Reward: 47.149. Std of Reward: 26.817. Training.
+[INFO] PlayerAgent. Step: 300000. Time Elapsed: 397.147 s. Mean Reward: 47.385. Std of Reward: 32.205. Training.
+[INFO] PlayerAgent. Step: 350000. Time Elapsed: 463.279 s. Mean Reward: 48.459. Std of Reward: 35.138. Training.
+[INFO] PlayerAgent. Step: 400000. Time Elapsed: 528.229 s. Mean Reward: 64.444. Std of Reward: 29.124. Training.
+[INFO] PlayerAgent. Step: 450000. Time Elapsed: 592.286 s. Mean Reward: 43.793. Std of Reward: 33.433. Training.
+[INFO] PlayerAgent. Step: 500000. Time Elapsed: 658.345 s. Mean Reward: 49.052. Std of Reward: 34.128. Training.
+[WARNING] Trainer has multiple policies, but default behavior only saves the first.
+[INFO] Exported results\PlayerAgentAI\PlayerAgent\PlayerAgent-499976.onnx
+[WARNING] Trainer has multiple policies, but default behavior only saves the first.
+[WARNING] Trainer has multiple policies, but default behavior only saves the first.
+[INFO] Exported results\PlayerAgentAI\PlayerAgent\PlayerAgent-500040.onnx
+[INFO] Copied results\PlayerAgentAI\PlayerAgent\PlayerAgent-500040.onnx to results\PlayerAgentAI\PlayerAgent.onnx.

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Building
 {
     public string data;
-    public static int cost;
+    public int cost;
     public Type resourceType;
     public float resourceAmount;
     public Building()
@@ -32,7 +32,7 @@ public class Building
 public class House : Building{
     public House(){
         this.data = "House";
-        cost = 5;
+        this.cost = 5;
         this.resourceType = Type.population;
         this.resourceAmount = 10;
     }
@@ -41,7 +41,7 @@ public class House : Building{
 public class Farm : Building{
     public Farm(){
         this.data = "Farm";
-        cost = 15;
+        this.cost = 15;
         this.resourceType = Type.food;
         this.resourceAmount = 0.2f;
     }
@@ -50,7 +50,7 @@ public class Farm : Building{
 public class Sawmill : Building{
     public Sawmill(){
         this.data = "Sawmill";
-        cost = 10;
+        this.cost = 10;
         this.resourceType = Type.materials;
         this.resourceAmount = 0.2f;
     }
